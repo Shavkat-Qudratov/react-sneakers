@@ -1,68 +1,53 @@
+import React, {useState} from 'react';
+import { BsHeart } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
 
-import React, { useState, useEffect } from 'react';
-import { FiChevronRight, FiChevronLeft } from 'react-icons/fi';
+import './Card.css';
 
-import data from './data';
-import './CardStyles.css';
+export const Card = ({ item }) => {
+  const { id, imageUrl, price, title } = item;
+  const [isLiked, setLiked] = React.useState(false);
+  const [isOrder, setIsOrder] = useState(false);
+  const dispatch = useDispatch();
 
-function Card() {
-	const [ people, setPeople ] = useState(data);
-	const [ index, setIndex ] = useState(0);
+  const hanleLike = (item) => {
+    dispatch({ type: 'ADD_TO_FAVOURITE', payload: item });
+    setLiked((prevValue) => !prevValue);
+  };
 
-	useEffect(
-		() => {
-			const lastIndex = people.length - 1;
-			if (index < 0) {
-				setIndex(lastIndex);
-			}
-			if (index > lastIndex) {
-				setIndex(0);
-			}
-		},
-		[ index, people ]
-	);
+  function setOrder() {
+    setIsOrder((order) => !order);
 
+    if (isOrder) {
+      dispatch({ type: "REMOVE_FROM_ORDERS", payload: item });
+    } else {
+      dispatch({ type: "ADD_TO_ORDERS", payload: item });
+    }
+  }
 
-	return (
-		<section className="section">
-		     <hr
-        style={{
-          position:'absolute',
-            height: '0px',
-            left: '135px',
-            top: '173px',
-            width:1078,
-            border:'1px solid #EAEAEA'
-        }}
-    />
-			<div className="section-center">
-				{people.map((person, personIndex) => {
-					const { id, image, } = person;
+  return (
+    <div className="card">
+      <div className="cardHeader">
+        <BsHeart
+          className={isLiked ? 'red' : 'emptyHeart'}
+          size={24}
+          onClick={() => hanleLike(item)}
+        />
+        <img width={'100%'} src={imageUrl} alt="green sneakers" />
+      </div>
+      <p className="cardTitle">{title}</p>
 
-					let position = 'nextSlide';
-					if (personIndex === index) {
-						position = 'activeSlide';
-					}
-					if (personIndex === index - 1 || (index === 0 && personIndex === people.length - 1)) {
-						position = 'lastIndex';
-					}
-
-					return (
-						<article className={position} >
-							<img src={image}  className="person-img" />
-						
-						</article>
-					);
-				})}
-				<button className="prev" onClick={() => setIndex(index - 1)}>
-					<FiChevronLeft />
-				</button>
-				<button className="next" onClick={() => setIndex(index + 1)}>
-					<FiChevronRight />
-				</button>
-			</div>
-		</section>
-	);
-}
-
-export default Card;
+      <div className="cardFooter">
+        <div>
+          <span className="tsena">Цена:</span> <br /> <span className="summa">{price} руб.</span>
+        </div>
+        <div
+        className={isOrder ? "orderIcon orderedIcon" : "orderIcon"}
+        onClick={setOrder}>
+          { isOrder ? <img src="/assets/images/addicon2.png" alt="" /> :  <img src="/assets/images/addicon.png"/>}
+          
+        </div>
+      </div>
+    </div>
+  );
+};
