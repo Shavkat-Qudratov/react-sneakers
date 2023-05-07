@@ -1,25 +1,30 @@
 import React from 'react';
-import {Wrapper} from '../../component/Wrapper'
-import {Header} from '../../component/Header'
-import {Slider} from '../../component/Slider'
-import {CardContainer} from '../../component/CardContainer'
+import { useDispatch, useSelector } from 'react-redux';
+import { Wrapper } from '../../component/Wrapper'
+import { Header } from '../../component/Header'
+import { Slider } from '../../component/Slider'
+import { CardContainer } from '../../component/CardContainer'
 
-import data from '../../data';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchItems } from '../../redux/thunk';
 
 export const Home = () => {
-  const { allSneakers } = data;
-  const state = useSelector((state) => state);
-  // console.log(state);
+  const { allSneakers } = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchItems(' http://localhost:5000/allSneakers', 'SAVE_ALL_SNEAKERS'));
+  }, [])
+
   return (
     <div className="homeContainer">
       <Wrapper>
         <Header />
-        <Slider/>
+        <Slider />
       </Wrapper>
       <Wrapper>
         <CardContainer items={allSneakers} />
-        {/* <CardContainer items={allSneakers} /> */}
+
       </Wrapper>
     </div>
   );
