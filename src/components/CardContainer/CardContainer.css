@@ -1,0 +1,10 @@
+.cardContainer {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-evenly;
+  padding: 2rem 0;
+  flex-wrap: wrap;
+
+  background-color: white;
+}
