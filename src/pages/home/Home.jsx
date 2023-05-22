@@ -7,7 +7,6 @@ import { deleteItem, fetchItems, likeSneakers, postItem } from '../../redux/thun
 import { useNavigate } from 'react-router-dom';
 import { addToFavorites } from './helpers';
 
-
 export const Home = () => {
   const [pageCount, setPageCount] = React.useState(1);
   const [isOpen, setOpen] = React.useState(false);
