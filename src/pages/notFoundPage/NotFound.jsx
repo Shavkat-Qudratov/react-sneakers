@@ -7,7 +7,7 @@ export const NotFound = () => {
   return (
     <div className="notFoundPage">
       <h3>Not Found Page</h3> 
-      <Link to={'/'}>Go home</Link>
+      <Link to={'/allSneakers'}>Go home</Link>
     </div>
   );
 };
