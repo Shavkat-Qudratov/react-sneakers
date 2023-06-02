@@ -1,7 +1,7 @@
 .cardContainer {
   width: 100%;
   padding: 1rem;
-background-color: #fff;
+  background-color: #fff;
   display: flex;
   flex-wrap: wrap;
   row-gap: 1rem;
