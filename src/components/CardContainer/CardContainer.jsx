@@ -3,18 +3,14 @@ import React from 'react';
 import { Card } from '../Card/Card';
 
 import './CardContainer.css';
+import MyLoader from '../ContentLoader/ContentLoader';
 
-export const CardContainer = ({ items, onClickItem }) => {
-  //   console.log(data);
+export const CardContainer = ({ isLoading, items, addToFavorites }) => {
   return (
     <div className="cardContainer">
-      {items.map((item) => {
-        return <Card key={item.id} item={item} onClickItem={onClickItem} />;
-      })}
+      {isLoading
+        ? [...new Array(6)].fill('null').map((item, idx) => <MyLoader key={idx} />)
+        : items.map((item) => <Card key={item.id} item={item} addToFavorites={addToFavorites} />)}
     </div>
   );
 };
-
-// dispatch reducer ishga tushuradi
-// action { type: "INC", payload: item }
-// dispatch({type: "ADD" , payload: item})

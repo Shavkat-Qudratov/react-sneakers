@@ -10,7 +10,7 @@ import './App.css';
 function App() {
   const router = createBrowserRouter([
     {
-      path: '/allSneakers/*',
+      path: '/allSneakers',
       element: <Home />,
     },
     {
@@ -31,4 +31,3 @@ function App() {
 }
 
 export default App;
-// <Route path="*" element={<PageNotFound />} />

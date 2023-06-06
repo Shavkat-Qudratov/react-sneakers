@@ -1,67 +1,38 @@
 import React, { useEffect } from 'react';
-import { CardContainer, Header, Wrapper, Slider, Modal } from '../../components';
-
+import { CardContainer, Header, Modal, Wrapper } from '../../components';
+import { collection, limit, query } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
+import { db } from '../../firebase-config.js';
 
-import { deleteItem, fetchItems, likeSneakers, postItem } from '../../redux/thunk';
 import { useNavigate } from 'react-router-dom';
-import { addToFavorites } from './helpers';
+
+import { fetchItems, toggleLike } from '../../redux/thunk';
 
 export const Home = () => {
-  const [pageCount, setPageCount] = React.useState(1);
-  const [isOpen, setOpen] = React.useState(false);
-  const { allSneakers } = useSelector((state) => state);
+  const { allSneakers, isLoading, isCartOpen } = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigete = useNavigate();
-
-
-
-  const inc = () => {
-    setPageCount((prevValue) => prevValue + 1);
-    if (pageCount === 3) {
-      setPageCount((prevValue) => prevValue = 1);
-    }
-  };
-
-  const dec = () => {
-    setPageCount((prevValue) => prevValue - 1);
-    if (pageCount === 1) {
-      setPageCount((prevValue) => prevValue = 3);
-    }
-  };
+  const sneakersRef = query(collection(db, 'sneakers'), limit(20));
+  const favoritesRef = collection(db, 'favorites');
 
   useEffect(() => {
-    
-    const mainUrl = `http://localhost:3030`;
-    const restUrl = `/allSneakers?_page=${pageCount}&_limit=4`;
-    dispatch(fetchItems(`${mainUrl}${restUrl}`, `SAVE_ALL_SNEAKERS`));
-    navigete(restUrl);
-  }, [pageCount]);
-
-
+    dispatch(fetchItems(sneakersRef, `SAVE_ALL_SNEAKERS`));
+  }, []);
 
   return (
     <div className="homeContainer">
-     <Modal isOpen={isOpen} close={() => setOpen(false)}/>
+      <Modal isOpen={isCartOpen} close={() => dispatch({ type: `CART_MODAL_TOGGLE` })} />
       <Wrapper>
-        <Header open={() => setOpen(true)} />
+        <Header open={() => dispatch({ type: `CART_MODAL_TOGGLE` })} />
       </Wrapper>
-      {/* <Wrapper>
-        <Slider />
-      </Wrapper> */}
       <Wrapper>
-        <CardContainer onClickItem={addToFavorites} items={allSneakers} />
-
-        <div style={{ margin: '4rem auto' }}>
-          <button onClick={() => dec()}>
-            Go back one page
-          </button>
-          <span style={{ fontSize: '32px', margin: '1rem' }}>{pageCount}</span>
-          <button onClick={() => inc()}>Go next page</button>
-        </div>
+        <CardContainer
+          isLoading={isLoading}
+          addToFavorites={(item) => dispatch(toggleLike(item, favoritesRef))}
+          items={allSneakers}
+        />
+        {/* <MUIPagination changePageCount={setPageCount} /> */}
       </Wrapper>
-
-
     </div>
   );
 };
