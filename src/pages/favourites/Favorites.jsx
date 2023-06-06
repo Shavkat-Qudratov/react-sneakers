@@ -1,24 +1,32 @@
 import React, { useEffect } from 'react';
-import { CardContainer, Header, Wrapper } from '../../components';
+import { collection } from 'firebase/firestore';
+import { CardContainer, Header, Wrapper,Modal } from '../../components';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchItems } from '../../redux/thunk';
-import { addToFavorites } from '../home/helpers';
+import { fetchItems, toggleLike } from '../../redux/thunk';
+
+import { db } from '../../firebase-config';
 
 export const Favorites = () => {
-  const { allSneakers } = useSelector((state) => state);
+  const { favorites, isLoading, isCartOpen } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const favoritesRef = collection(db, 'favorites');
 
   useEffect(() => {
-    dispatch(fetchItems(`http://localhost:3030/favorites`, `SAVE_ALL_SNEAKERS`));
+    dispatch(fetchItems(favoritesRef, `SAVE_FAVORITE_SNEAKERS`));
   }, []);
 
   return (
     <div>
+      <Modal isOpen={isCartOpen} close={() => dispatch({ type: `CART_MODAL_TOGGLE` })} />
       <Wrapper>
-        <Header />
+        <Header open={() => dispatch({ type: `CART_MODAL_TOGGLE` })} />
       </Wrapper>
       <Wrapper>
-        <CardContainer onClickItem={addToFavorites} items={allSneakers} />
+        <CardContainer
+          isLoading={isLoading}
+          addToFavorites={(item) => dispatch(toggleLike(item, favoritesRef))}
+          items={favorites}
+        />
       </Wrapper>
     </div>
   );
